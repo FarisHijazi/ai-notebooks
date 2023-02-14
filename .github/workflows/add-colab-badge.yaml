@@ -1,21 +1,43 @@
-# .github/workflows/main.yml
-name: Test Colab Badge Action
-on: [push]
 
+name: Add Colab Badges
+on:
+  push:
+    paths:
+      # Trigger workflow only for notebooks or md file changes
+      - "**.ipynb"
+      - "**.md"
+  pull_request:
+    paths:
+      # The same for PR
+      - "**.ipynb"
+      - "**.md"
 jobs:
-  build:
+  badges:
     name: Colab Badge
     runs-on: ubuntu-latest
     steps:
+      # First do checkout
       - name: Checkout
-        id: checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
+
+      # Then launch the colab-badge-action (v4)
       - name: Add/Update badges
-        id: badges
-        uses: trsvchn/colab-badge-action@v2
+        uses: trsvchn/colab-badge-action@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          check: 'all'
-          update: true
+          # target_branch: ${{ github.ref }}
           target_branch: master
-          target_repository: ${{ github.repository }}
+          target_repository: usr/repo
+          check: "all"  # Check all notebook/md files
+          update: true  # Update self-badges for renamed/moved notebooks
+          verbose: true  # Print some info during the run
+
+      # After that we have to commit and push changes
+      # Note: this step requires GitHub token
+      - name: Commit and Push
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Add Colab Badges"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # And that's it!
