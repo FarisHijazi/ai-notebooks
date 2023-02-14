@@ -1,0 +1,27 @@
+name: Example Workflow
+on: [push]
+
+jobs:
+  badges:
+    name: Example Badge Job
+    runs-on: ubuntu-latest
+    steps:
+      # - name: Checkout first
+      #   id: checkout
+      #   uses: actions/checkout@v2
+
+      - name: Add/Update badges
+        id: badges
+        uses: trsvchn/colab-badge-action@v4
+        with:
+          check: "all"
+          target_branch: master
+          target_repository: user/user-repo
+          update: true
+
+      - name: Use your favorite commit&push action here
+        uses: action/commit@push
+        with: 
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit_message: "Update badges"
+          # branch: ${{ steps.badges.outputs.branch }}
