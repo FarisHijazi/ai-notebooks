@@ -16,7 +16,7 @@ jobs:
         with:
           check: "all"
           target_branch: master
-          target_repository: user/user-repo
+          target_repository: FarisHijazi/ai-ml-dl-course
           update: true
 
       - name: Use your favorite commit&push action here
